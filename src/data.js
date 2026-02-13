@@ -10,7 +10,7 @@ export const saveData = () => {
 
 export const getUser = (m, strict = false) => {
     const id = m.from.id
-    console.log(id)
+
     if (!data[id]) {
         if (strict) throw new Error("Ошибка: пользователь не найден!")
         data[id] = {

@@ -13,8 +13,6 @@ export const sendAccess = (ctx, page, ...selection) => {
     let text;
     let reply_markup;
 
-    console.log('access', page, selection)
-
     page = +page;
 
     if (isNaN(page) || !page) {
@@ -29,10 +27,9 @@ export const sendAccess = (ctx, page, ...selection) => {
         + '\n<b>Для начала:</b> вы уже были в вайтлисте или получали проходку?';
     }
     else if (page === 1) {
-        text = "⚡️ <b>Понял!</b> В таком случае, вы уже ознакомлены с правилами проекта?\n"
-            + "Их можно прочесть по ссылке: лисяк.рф/LisyakRules.pdf\n"
-            + "Если ссылка не рабочая, то пожалуйста, попросите актуальную у админов проекта!\n\n"
-            + "Чтобы играть в <b>режим Кофе</b>, вы должны быть ознакомлены с правилами!";
+        text = "⚡️ <b>Понял!</b> В таком случае, вы уже ознакомлены с правилами проекта? "
+            + "Их можно прочесть здесь: <a href=\"https://lisyak.net/LisyakRules.pdf\"><b>Ссылка</b></a>\n\n"
+            + "<b>Чтобы не получить бан за нарушения, рекомендую ознакомиться!</b>";
 
         reply_markup = {
             inline_keyboard: [
@@ -71,6 +68,7 @@ export const sendAccess = (ctx, page, ...selection) => {
             saveData()
         }
     }
+
     const options = { reply_markup }
     edit(message, text, options);
 }
@@ -97,8 +95,6 @@ export const enterAccess = async message => {
         username: text,
         verified: false
     }
-
-    console.log('limited?', user.req_limit > Date.now())
 
     /*
      * Проверка, что запрос ранее был отправлен (таймаут 10 минут)
@@ -199,7 +195,27 @@ export const handleLinkedBroadcast = async data => {
     user.account.verified = true;
 
     bot.sendMessage(id, "🎉 <b>Успех</b> — игровой профиль " + username + " успешно привязан!"
-    + "\nВ скором времени вы сможете <b>загружать скины</b> и <b>менять пароль.</b>", {
+    + "\nНажмите \"Профиль\" в меню, чтобы <b>загружать скины</b> (и в скором времени менять пароль!)", {
+        parse_mode: 'HTML'
+    })
+    saveData()
+}
+
+export const handleGameUnlink = async data => {
+    const { username, externalId: id } = data;
+
+    const user = getUser({ from: { id } })
+
+    console.log('Unlinked user from broadcast', user)
+
+    if (!user.account) {
+        console.log('No account set, discarding')
+        return;
+    }
+
+    user.account = null
+
+    bot.sendMessage(id, "🎉 Игровой профиль " + username + " отвязан!", {
         parse_mode: 'HTML'
     })
     saveData()

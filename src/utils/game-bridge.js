@@ -7,11 +7,9 @@ const topicIdToName = {}
 Object.entries(topicNameToId).forEach(e => topicIdToName[e[1]] = e[0]) // idk...
 
 export const handleGlobal = async (from, action, data) => {
-    console.log('got global')
+    console.log('Game Chat message:', from, data.recipients, data.username, data.message)
     const icon = { economy: "☕️", chicory: "⚡️" }[from]
     const topicId = topicNameToId[from]
-
-    console.log(from, action, data)
 
     if (action === "msg") await topicSend(topicId, `${icon} <b>${data.username}:</b> ${data.message.slice(1)}`)
     else if (action === "info") await topicSend(topicId, `${icon} <b>${data.text}</b>`)

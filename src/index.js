@@ -3,7 +3,7 @@ import TelegramBot from 'node-telegram-bot-api'
 
 import { send, edit } from './utils/chat'
 import { sendStart } from './panels/start'
-import { sendAccess, enterAccess, sendCode, handleLinkedBroadcast, adminHandle } from './panels/access'
+import { sendAccess, enterAccess, sendCode, handleLinkedBroadcast, handleGameUnlink, adminHandle } from './panels/access'
 import { sendMenu } from './panels/menu'
 import { sendProfile } from './panels/profile'
 import { handleSkins, uploadSkin } from './panels/skins'
@@ -11,7 +11,7 @@ import { sendTickets, startCreation, inputText, adminTicketClick, adminTicketRep
 
 import { getUser, saveData } from './data'
 
-import { connect, onNotification, ask } from './utils/heracles-client'
+import { connect, disconnect, onNotification, ask } from './utils/heracles-client'
 import { sendMessageToGame, whitelistAction } from './utils/game-bridge'
 
 const bot = new TelegramBot(process.env.TOKEN, { polling: true })
@@ -29,6 +29,9 @@ onNotification((sender, data) => {
     if (type === "linked") {
         handleLinkedBroadcast(JSON.parse(data.slice(7)))
     }
+    else if (type === "unlinked") {
+        handleGameUnlink(JSON.parse(data.slice(9)))
+    }
 })
 
 
@@ -44,6 +47,7 @@ bot.on('message', async msg => {
         if (msg.chat.id > 0) {
             /* Обычные команды в личке */
             if (text === '/start') return sendStart(0, msg)
+            else if (text === '⚡️ Открыть главное меню') return sendMenu(msg, true)
             else {
                 const user = getUser(msg)
                 /* Стейты */
@@ -135,5 +139,15 @@ process.on('uncaughtException', (err, origin) => {
 process.on('unhandledRejection', (err, origin) => {
     console.error(`Caught exception: ${err}\nException origin: ${origin}`);
 });
+
+async function shutdown() {
+    console.log('Shutting down...')
+    await bot.stopPolling()
+    await disconnect()
+    process.exit(0)
+}
+
+process.on('SIGTERM', shutdown)
+process.on('SIGINT', shutdown)
 
 export const ADMINS = [ 1067953223, 7228575632 ]

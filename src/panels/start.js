@@ -25,8 +25,22 @@ const startText = [
     + `⚡️ Если есть вопрос, вы можете создать обращение, почитать базу знаний или пойти в чат. Чтож, удачи!`,
 ]
 
-export const sendStart = (index, message, isCallback) => {
+const panelKeyboard = {
+    reply_markup: {
+        keyboard: [[
+        { text: "⚡️ Открыть главное меню", style: 'success' }
+        ]],
+        resize_keyboard: true,
+        input_field_placeholder: "Не забывайте гладить своих лисичек! 🦊"
+    }
+}
+
+export const sendStart = async (index, message, isCallback) => {
     if (index < 0 || index > 2) index = 0;
+
+    if (index === 0 && !isCallback) {
+        await send(message, `🔄 <b>Открываю клавиатуру...</b>`, panelKeyboard)
+    }
 
     const inline_keyboard = [
         index === 2 ? [
@@ -43,8 +57,8 @@ export const sendStart = (index, message, isCallback) => {
         disable_web_page_preview: true
     };
 
-    if (isCallback) edit(message, getStartText(index, message), options);
-    else send(message, getStartText(index, message), options);
+    if (isCallback) await edit(message, getStartText(index, message), options);
+    else await send(message, getStartText(index, message), options);
 }
 
 const getStartText = (index, msg) => {

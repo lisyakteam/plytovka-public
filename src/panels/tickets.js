@@ -34,7 +34,6 @@ export const sendTickets = ctx => {
     ]
 
     const options = { reply_markup: { inline_keyboard } }
-    console.log(inline_keyboard)
 
     edit(ctx.message, text, options)
 }
