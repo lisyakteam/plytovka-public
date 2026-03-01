@@ -161,7 +161,7 @@ export const handleSkins = async (ctx, args) => {
         try {
             const skinsRaw = await ask(18, `${user.account.username}`);
             if (skinsRaw[0] !== '1') {
-                const skins = JSON.parse(skinsRaw.slice(2));
+                const { skins } = JSON.parse(skinsRaw.slice(2));
                 const skin = skins.find(s => s.name === name);
                 if (skin && skin.url) {
                     previewUrl = skin.url;//'http://127.0.0.1/skins' + skin.url.slice(skin.url.lastIndexOf('/'));
@@ -255,7 +255,7 @@ export const handleSkins = async (ctx, args) => {
     const skinsRaw = await ask(18, `${user.account.username}`);
     if (skinsRaw[0] === "1") return send(ctx.message, "Ошибка получения списка.");
 
-    const skins = JSON.parse(skinsRaw.slice(2));
+    const { skins, skin } = JSON.parse(skinsRaw.slice(2));
     const buttons = skins.map(s => [{ text: s.name, callback_data: `skins manage ${s.name}` }]);
     buttons.push([{ text: "➕ Загрузить новый", callback_data: "skins upload" }]);
     buttons.push([{ text: "В профиль", callback_data: "profile" }]);

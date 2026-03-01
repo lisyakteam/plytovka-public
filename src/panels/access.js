@@ -215,7 +215,7 @@ export const handleGameUnlink = async data => {
 
     user.account = null
 
-    bot.sendMessage(id, "🎉 Игровой профиль " + username + " отвязан!", {
+    bot.sendMessage(id, "❗️ Игровой профиль " + username + " отвязан!", {
         parse_mode: 'HTML'
     })
     saveData()
