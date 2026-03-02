@@ -49,3 +49,18 @@ export const setupServerChatTopic = async msg => {
     saveData();
     return send(msg, "✅ <b>Успешно</b>!\nИгровой сервер для Telegram Link установлен: " + text, body(msg))
 }
+
+export const markNetworkChat = async msg => {
+    const chatId = msg.chat.id;
+
+    if (!getData().settings) getData().settings = {};
+    const settings = getData().settings
+
+    if (!settings.networkChats) settings.networkChats = []
+
+    if (!settings.networkChats.includes(chatId)) settings.networkChats.push(chatId);
+    else settings.networkChats.splice(settings.networkChats.indexOf(chatId), 1);
+
+    saveData();
+    return send(msg, "✅ <b>Успешно</b>!\nnetworkChats size: " + settings.networkChats.length, body(msg))
+}
